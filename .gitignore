@@ -1,0 +1,9 @@
+# IDE and editors
+.vscode
+.idea
+
+# vendoring
+vendor
+
+#debug files
+debug
