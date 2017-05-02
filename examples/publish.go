@@ -10,8 +10,6 @@ const (
 
 func main() {
 
-	rp.InitLogger()
-
 	// Create new Report Portal client
 	rpClient := rp.NewClient(project, uuid)
 

@@ -2,9 +2,8 @@ package rp
 
 import (
 	"net/http"
-	"os"
 
-	logging "github.com/op/go-logging"
+	log "github.com/Sirupsen/logrus"
 )
 
 const (
@@ -46,19 +45,8 @@ const (
 	ModeDefault = "DEFAULT"
 )
 
-// setup logger
-var log = logging.MustGetLogger("rp.logger")
+func initLogger() {
 
-// setup logger format
-var logFormat = logging.MustStringFormatter(
-	`%{color}%{time:15:04:05.000} %{shortfunc} ▶ %{level:.4s} %{id:03x}%{color:reset} %{message}`,
-)
-
-//InitLogger - initiate logger
-func InitLogger() {
-	logHandler := logging.NewLogBackend(os.Stderr, "rp ", 0)
-	formatter := logging.NewBackendFormatter(logHandler, logFormat)
-	logging.SetBackend(logHandler, formatter)
 }
 
 // NewClient creates a RP Client for specified project and user unique id

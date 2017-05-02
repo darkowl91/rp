@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"io"
+
+	log "github.com/Sirupsen/logrus"
 )
 
 // decodeError decodes an Error from an io.Reader.

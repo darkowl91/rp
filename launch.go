@@ -5,9 +5,11 @@ import (
 	"encoding/json"
 	"net/http"
 	"time"
+
+	log "github.com/Sirupsen/logrus"
 )
 
-// StartLaunch create new lauch for specified project
+// StartLaunch create new launch for specified project
 func (c *Client) StartLaunch(launch Launch) (launchID string) {
 	apiURL := c.baseURL + "/launch"
 

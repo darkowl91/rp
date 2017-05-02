@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"net/http"
 	"time"
+
+	log "github.com/Sirupsen/logrus"
 )
 
 // StartTestItem is used to create new test suite for specified launch
