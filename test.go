@@ -1,118 +1,73 @@
 package rp
 
 import (
-	"bytes"
 	"encoding/json"
 	"net/http"
-	"time"
-
-	log "github.com/Sirupsen/logrus"
 )
 
 // StartTestItem is used to create new test suite for specified launch
-func (c *Client) StartTestItem(parentItemID string, testItem TestItem) (testItemID string) {
-	apiURL := c.baseURL + "/item"
+func (c *Client) StartTestItem(parentItemID string, testItem TestItem) (testItemID *ResponceID) {
+	apiURL := "/item"
 	if len(parentItemID) > 0 {
 		apiURL = apiURL + "/" + parentItemID
 	}
 
-	if len(testItem.StartTime) == 0 {
-		testItem.StartTime = time.Now().Format(time.RFC3339)
-	}
-
-	payload, err := json.Marshal(testItem)
-	if err != nil {
-		log.Error(err)
-	}
-
-	req, err := http.NewRequest("POST", apiURL, bytes.NewBuffer(payload))
-	req.Header.Add("Authorization", c.authBearer)
-	req.Header.Add("Content-Type", "application/json;charset=utf-8")
-
-	log.Infof("RP Request: %v", req)
-
-	resp, err := c.http.Do(req)
-	if err != nil {
-		log.Error(err)
-	}
-
+	resp, err := c.post(apiURL, testItem)
 	defer resp.Body.Close()
 
-	log.Infof("RP Responce: %v", resp)
-	if resp.StatusCode >= 400 {
-		log.Error(decodeError(resp.Body))
-	} else if resp.StatusCode == http.StatusCreated {
-		var testItemResponce struct {
-			ID string `json:"id"`
-		}
-		err := json.NewDecoder(resp.Body).Decode(&testItemResponce)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
+	if resp.StatusCode == http.StatusCreated {
+		err := json.NewDecoder(resp.Body).Decode(&testItemID)
 		if err != nil {
 			log.Error(err)
 		}
-		testItemID = testItemResponce.ID
+	} else {
+		log.Error(decodeError(resp.Body))
 	}
-
 	return
 }
 
 // FinishTestItem update specified test item to passed (completed state)
-func (c *Client) FinishTestItem(testItemID, executionStatus string) {
+func (c *Client) FinishTestItem(testItemID string, result ExecutionResult) {
 	if len(testItemID) == 0 {
 		log.Error("suiteID could not be empty")
-	}
-	apiURL := c.baseURL + "/item/" + testItemID
-
-	result := new(executionResult)
-	result.EndTime = time.Now().Format(time.RFC3339)
-	result.Status = executionStatus
-
-	payload, err := json.Marshal(result)
-	if err != nil {
-		log.Error(err)
+		return
 	}
 
-	req, err := http.NewRequest("PUT", apiURL, bytes.NewBuffer(payload))
-	req.Header.Add("Authorization", c.authBearer)
-	req.Header.Add("Content-Type", "application/json;charset=utf-8")
-
-	log.Infof("RP Request: %v", req)
-
-	resp, err := c.http.Do(req)
-	if err != nil {
-		log.Error(err)
-	}
+	resp, err := c.put("/item/"+testItemID, result)
 	defer resp.Body.Close()
 
-	log.Infof("RP Responce: %v", resp)
-	if resp.StatusCode >= 400 {
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
+	if resp.StatusCode != http.StatusOK {
 		log.Error(decodeError(resp.Body))
 	}
 }
 
 // SendMesssage create new log entry for provided item
-func (c *Client) SendMesssage(lgoMessage LogMessage) {
-	apiURL := c.baseURL + "/log"
-
-	payload, err := json.Marshal(lgoMessage)
-	if err != nil {
-		log.Error(err)
-	}
-
-	req, err := http.NewRequest("POST", apiURL, bytes.NewBuffer(payload))
-	req.Header.Add("Authorization", c.authBearer)
-	req.Header.Add("Content-Type", "application/json")
-
-	log.Infof("RP Request: %v", req)
-
-	resp, err := c.http.Do(req)
-	if err != nil {
-		log.Error(err)
-	}
+func (c *Client) SendMesssage(lgoMessage LogMessage) (messageID *ResponceID) {
+	resp, err := c.post("/log", lgoMessage)
 	defer resp.Body.Close()
 
-	log.Infof("RP Responce: %v", resp)
-	if resp.StatusCode >= http.StatusBadRequest {
-		log.Error(decodeError(resp.Body))
+	if err != nil {
+		log.Error(err)
+		return
 	}
 
+	if resp.StatusCode == http.StatusCreated {
+		err := json.NewDecoder(resp.Body).Decode(&messageID)
+		if err != nil {
+			log.Error(err)
+		}
+	} else {
+		log.Error(decodeError(resp.Body))
+	}
+	return
 }
