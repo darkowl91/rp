@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log"
 )
 
 // decodeError decodes an Error from an io.Reader.
@@ -16,7 +15,7 @@ func decodeError(r io.Reader) error {
 	}
 	err := json.NewDecoder(r).Decode(&e)
 	if err != nil {
-		log.Fatal(err)
+		log.Error(err)
 		return errors.New("couldn't decode RP error")
 	}
 	return fmt.Errorf("Code: %d, Mesage: %s", e.Code, e.Message)

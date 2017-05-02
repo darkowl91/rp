@@ -28,8 +28,8 @@ type TestItem struct {
 	Tags        []string `json:"tags,omitempty"`
 }
 
-// executionRresult is used to update executed TestItem.
-type executionRresult struct {
+// executionResult is used to update executed TestItem.
+type executionResult struct {
 	EndTime string `json:"end_time"`
 	Status  string `json:"status"`
 }

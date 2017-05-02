@@ -5,5 +5,8 @@
 # vendoring
 vendor
 
-#debug files
+#debug
 debug
+
+#bin
+*.exe

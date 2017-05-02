@@ -3,7 +3,6 @@ package rp
 import (
 	"bytes"
 	"encoding/json"
-	"log"
 	"net/http"
 	"time"
 )
@@ -18,32 +17,32 @@ func (c *Client) StartLaunch(launch Launch) (launchID string) {
 
 	payload, err := json.Marshal(launch)
 	if err != nil {
-		log.Fatal(err)
+		log.Error(err)
 	}
 
 	req, err := http.NewRequest("POST", apiURL, bytes.NewBuffer(payload))
 	req.Header.Add("Authorization", c.authBearer)
 	req.Header.Add("Content-Type", "application/json;charset=utf-8")
 
-	log.Printf("RP Request: %v", req)
+	log.Infof("RP Request: %v", req)
 
 	resp, err := c.http.Do(req)
 	if err != nil {
-		log.Fatal(err)
+		log.Error(err)
 	}
 
 	defer resp.Body.Close()
 
-	log.Printf("RP Responce: %v", resp)
+	log.Info("RP Responce: %v", resp)
 	if resp.StatusCode >= 400 {
-		log.Fatal(decodeError(resp.Body))
+		log.Error(decodeError(resp.Body))
 	} else if resp.StatusCode == http.StatusCreated {
 		var launchResponce struct {
 			ID string `json:"id"`
 		}
 		err := json.NewDecoder(resp.Body).Decode(&launchResponce)
 		if err != nil {
-			log.Fatal(err)
+			log.Error(err)
 		}
 		launchID = launchResponce.ID
 	}
@@ -54,33 +53,33 @@ func (c *Client) StartLaunch(launch Launch) (launchID string) {
 // FinishLaunch update specified lauch to passed (completed state)
 func (c *Client) FinishLaunch(launchID, executionStatus string) {
 	if len(launchID) == 0 {
-		log.Fatal("lauchID could not be empty")
+		log.Error("launchID could not be empty")
 	}
 	apiURL := c.baseURL + "/launch/" + launchID + "/finish"
 
-	result := new(executionRresult)
+	result := new(executionResult)
 	result.EndTime = time.Now().Format(time.RFC3339)
 	result.Status = executionStatus
 
 	payload, err := json.Marshal(result)
 	if err != nil {
-		log.Fatal(err)
+		log.Error(err)
 	}
 
 	req, err := http.NewRequest("PUT", apiURL, bytes.NewBuffer(payload))
 	req.Header.Add("Authorization", c.authBearer)
 	req.Header.Add("Content-Type", "application/json;charset=utf-8")
 
-	log.Printf("RP Request: %v", req)
+	log.Infof("RP Request: %v", req)
 
 	resp, err := c.http.Do(req)
 	if err != nil {
-		log.Fatal(err)
+		log.Error(err)
 	}
 	defer resp.Body.Close()
 
-	log.Printf("RP Responce: %v", resp)
+	log.Infof("RP Responce: %v", resp)
 	if resp.StatusCode >= 400 {
-		log.Fatal(decodeError(resp.Body))
+		log.Error(decodeError(resp.Body))
 	}
 }
