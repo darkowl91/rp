@@ -6,7 +6,7 @@ import (
 )
 
 // StartLaunch creates new launch
-func (c *Client) StartLaunch(launch Launch) (launchID *ResponceID) {
+func (c *Client) StartLaunch(launch *Launch) (launchID *ResponceID) {
 	resp, err := c.post("/launch", launch)
 	defer resp.Body.Close()
 
@@ -27,7 +27,7 @@ func (c *Client) StartLaunch(launch Launch) (launchID *ResponceID) {
 }
 
 // FinishLaunch update specified launch to passed (completed state)
-func (c *Client) FinishLaunch(launchID string, result ExecutionResult) {
+func (c *Client) FinishLaunch(launchID string, result *ExecutionResult) {
 	if len(launchID) == 0 {
 		log.Error("launchID could not be empty")
 		return

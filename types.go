@@ -15,11 +15,11 @@ type Client struct {
 
 // Launch that identifies a test run.
 type Launch struct {
-	Name        string `json:"name"`
-	Description string `json:"description,omitempty"`
-	Mode        string `json:"mode,omitempty"`
-	StartTime   time.Time
-	Tags        []string `json:"tags,omitempty"`
+	Name        string    `json:"name"`
+	Description string    `json:"description,omitempty"`
+	Mode        string    `json:"mode,omitempty"`
+	StartTime   time.Time `json:"start_time"`
+	Tags        []string  `json:"tags,omitempty"`
 }
 
 // MarshalJSON with custom time format

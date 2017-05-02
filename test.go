@@ -6,7 +6,7 @@ import (
 )
 
 // StartTestItem is used to create new test suite for specified launch
-func (c *Client) StartTestItem(parentItemID string, testItem TestItem) (testItemID *ResponceID) {
+func (c *Client) StartTestItem(parentItemID string, testItem *TestItem) (testItemID *ResponceID) {
 	apiURL := "/item"
 	if len(parentItemID) > 0 {
 		apiURL = apiURL + "/" + parentItemID
@@ -32,7 +32,7 @@ func (c *Client) StartTestItem(parentItemID string, testItem TestItem) (testItem
 }
 
 // FinishTestItem update specified test item to passed (completed state)
-func (c *Client) FinishTestItem(testItemID string, result ExecutionResult) {
+func (c *Client) FinishTestItem(testItemID string, result *ExecutionResult) {
 	if len(testItemID) == 0 {
 		log.Error("suiteID could not be empty")
 		return
@@ -52,7 +52,7 @@ func (c *Client) FinishTestItem(testItemID string, result ExecutionResult) {
 }
 
 // SendMesssage create new log entry for provided item
-func (c *Client) SendMesssage(lgoMessage LogMessage) (messageID *ResponceID) {
+func (c *Client) SendMesssage(lgoMessage *LogMessage) (messageID *ResponceID) {
 	resp, err := c.post("/log", lgoMessage)
 	defer resp.Body.Close()
 

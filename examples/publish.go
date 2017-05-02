@@ -20,7 +20,7 @@ func main() {
 	rpClient := rp.NewClient(project, uuid)
 
 	// Create new launch before start test execution
-	launchID := rpClient.StartLaunch(rp.Launch{
+	launchID := rpClient.StartLaunch(&rp.Launch{
 		Name:      "Go Tests Launch",
 		Mode:      rp.ModeDebug,
 		StartTime: time.Now(),
@@ -28,7 +28,7 @@ func main() {
 	})
 
 	// update launch to completed state
-	rpClient.FinishLaunch(launchID.ID, rp.ExecutionResult{
+	rpClient.FinishLaunch(launchID.ID, &rp.ExecutionResult{
 		EndTime: time.Now(),
 		Status:  rp.ExecutionStatusPassed,
 	})
