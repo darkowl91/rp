@@ -87,6 +87,11 @@ func parseXMLReport(reportDir string) ([]xmlSuite, error) {
 	// read all files in report dir
 	for i := 0; i < n; i++ {
 		f := files[i]
+		if filepath.Ext(f.Name()) != ".xml" || f.IsDir() {
+			log.Debugf("not report file '%s'", f.Name())
+			continue
+		}
+
 		xmlFile, err := os.Open(filepath.Join(reportDir, f.Name()))
 		defer xmlFile.Close()
 		if err != nil {

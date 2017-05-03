@@ -62,7 +62,7 @@ func joinURL(base string, parts ...string) string {
 func parseTimeStamp(timeStr string) time.Time {
 	t, err := time.Parse(TimestampLayout, timeStr)
 	if err != nil {
-		log.Errorf("could not parse timestamp: %v", err)
+		log.Error(err)
 	}
 	return t
 }
