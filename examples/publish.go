@@ -3,7 +3,6 @@ package main
 import (
 	"time"
 
-	logging "github.com/op/go-logging"
 	"github.com/owl/rp"
 )
 
@@ -14,7 +13,7 @@ const (
 
 func main() {
 	// enable log level
-	rp.InitLogger(logging.DEBUG)
+	rp.InitLogger()
 
 	// Create new Report Portal client
 	rpClient := rp.NewClient(project, uuid)

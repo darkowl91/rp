@@ -16,14 +16,15 @@ var (
 )
 
 // InitLogger for structured logger output
-func InitLogger(level logging.Level) {
-	logging.Reset()
-	// stdout
+func InitLogger() {
 	logHandler := logging.NewLogBackend(os.Stdout, "", 0)
+
 	formatter := logging.NewBackendFormatter(logHandler, format)
-	leveledHandler := logging.AddModuleLevel(logHandler)
-	leveledHandler.SetLevel(level, "rp.logger")
-	logging.SetBackend(leveledHandler, formatter)
+
+	logger := logging.AddModuleLevel(logHandler)
+	logger.SetLevel(logging.DEBUG, "")
+	logger.SetLevel(logging.DEBUG, "rp.logger")
+	logging.SetBackend(logger, formatter)
 }
 
 // decodeError decodes an Error from an io.Reader.
