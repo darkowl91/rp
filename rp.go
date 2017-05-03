@@ -9,6 +9,10 @@ import (
 const (
 	apiURL = "http://10.48.128.12:80/api/v1/"
 
+	// TimestampLayout can be used with time.Parse to create time.Time values from strings.
+	// It is an ISO 8601 UTC timestamp with a zero offset.
+	TimestampLayout = "2006-01-02T15:04:05"
+
 	// TestItemTypeSuite - SUITE
 	TestItemTypeSuite = "SUITE"
 	// TestItemTypeStep - STEP

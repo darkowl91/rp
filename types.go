@@ -29,7 +29,7 @@ func (launch *Launch) MarshalJSON() ([]byte, error) {
 		StartTime string `json:"start_time"`
 		*Alias
 	}{
-		StartTime: launch.StartTime.Format(time.RFC3339),
+		StartTime: launch.StartTime.Format(TimestampLayout),
 		Alias:     (*Alias)(launch),
 	})
 }
@@ -52,7 +52,7 @@ func (item *TestItem) MarshalJSON() ([]byte, error) {
 		StartTime string `json:"start_time"`
 	}{
 		Alias:     (*Alias)(item),
-		StartTime: item.StartTime.Format(time.RFC3339),
+		StartTime: item.StartTime.Format(TimestampLayout),
 	})
 }
 
@@ -70,7 +70,7 @@ func (result *ExecutionResult) MarshalJSON() ([]byte, error) {
 		EndTime string `json:"end_time"`
 	}{
 		Alias:   (*Alias)(result),
-		EndTime: result.EndTime.Format(time.RFC3339),
+		EndTime: result.EndTime.Format(TimestampLayout),
 	})
 }
 
@@ -94,11 +94,11 @@ func (msg *LogMessage) MarshalJSON() ([]byte, error) {
 		Time string `json:"time"`
 	}{
 		Alias: (*Alias)(msg),
-		Time:  msg.Time.Format(time.RFC3339),
+		Time:  msg.Time.Format(TimestampLayout),
 	})
 }
 
-type XMLSuite struct {
+type xmlSuite struct {
 	XMLName     string  `xml:"testsuite"`
 	ID          int     `xml:"id,attr"`
 	Name        string  `xml:"name,attr"`
@@ -112,7 +112,7 @@ type XMLSuite struct {
 	Errors   int `xml:"errors,attr"`
 
 	Properties properties `xml:"properties"`
-	Cases      []tc       `xml:"testcase"`
+	Cases      []xmlTest  `xml:"testcase"`
 
 	SystemOut string `xml:"system-out"`
 	SystemErr string `xml:"system-err"`
@@ -121,15 +121,14 @@ type XMLSuite struct {
 type properties struct {
 }
 
-type tc struct {
-	Name      string   `xml:"name,attr"`
-	ClassName string   `xml:"classname,attr"`
-	Time      float64  `xml:"time,attr"`
-	Failure   *failure `xml:"failure,omitempty"`
+type xmlTest struct {
+	Name      string      `xml:"name,attr"`
+	ClassName string      `xml:"classname,attr"`
+	Time      float64     `xml:"time,attr"`
+	Failure   *xmlFailure `xml:"failure,omitempty"`
 }
 
-type failure struct {
-	// not clear what type is but it's required
+type xmlFailure struct {
 	Type    string `xml:"type,attr"`
 	Message string `xml:"message,attr"`
 	Details string `xml:",chardata"`
