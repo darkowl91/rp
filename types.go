@@ -39,7 +39,7 @@ type TestItem struct {
 	LaunchID    string    `json:"launch_id"`
 	Name        string    `json:"name"`
 	Description string    `json:"description,omitempty"`
-	Time        time.Time `json:"start_time"`
+	StartTime   time.Time `json:"start_time"`
 	Type        string    `json:"type"`
 	Tags        []string  `json:"tags,omitempty"`
 }
@@ -49,10 +49,10 @@ func (item *TestItem) MarshalJSON() ([]byte, error) {
 	type Alias TestItem
 	return json.Marshal(&struct {
 		*Alias
-		Time string `json:"start_time"`
+		StartTime string `json:"start_time"`
 	}{
-		Alias: (*Alias)(item),
-		Time:  item.Time.Format(time.RFC3339),
+		Alias:     (*Alias)(item),
+		StartTime: item.StartTime.Format(time.RFC3339),
 	})
 }
 
@@ -91,9 +91,46 @@ func (msg *LogMessage) MarshalJSON() ([]byte, error) {
 	type Alias LogMessage
 	return json.Marshal(&struct {
 		*Alias
-		Time string `json:"end_time"`
+		Time string `json:"time"`
 	}{
 		Alias: (*Alias)(msg),
 		Time:  msg.Time.Format(time.RFC3339),
 	})
+}
+
+type XMLSuite struct {
+	XMLName     string  `xml:"testsuite"`
+	ID          int     `xml:"id,attr"`
+	Name        string  `xml:"name,attr"`
+	PackageName string  `xml:"package,attr"`
+	TimeStamp   string  `xml:"timestamp,attr"`
+	Time        float64 `xml:"time,attr"`
+	HostName    string  `xml:"hostname,attr"`
+
+	Tests    int `xml:"tests,attr"`
+	Failures int `xml:"failures,attr"`
+	Errors   int `xml:"errors,attr"`
+
+	Properties properties `xml:"properties"`
+	Cases      []tc       `xml:"testcase"`
+
+	SystemOut string `xml:"system-out"`
+	SystemErr string `xml:"system-err"`
+}
+
+type properties struct {
+}
+
+type tc struct {
+	Name      string   `xml:"name,attr"`
+	ClassName string   `xml:"classname,attr"`
+	Time      float64  `xml:"time,attr"`
+	Failure   *failure `xml:"failure,omitempty"`
+}
+
+type failure struct {
+	// not clear what type is but it's required
+	Type    string `xml:"type,attr"`
+	Message string `xml:"message,attr"`
+	Details string `xml:",chardata"`
 }

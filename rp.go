@@ -7,8 +7,7 @@ import (
 )
 
 const (
-	// APIURL to access RP API
-	APIURL = "http://10.48.128.12:80/api/v1/"
+	apiURL = "http://10.48.128.12:80/api/v1/"
 
 	// TestItemTypeSuite - SUITE
 	TestItemTypeSuite = "SUITE"
@@ -54,7 +53,7 @@ func NewClient(project, uuid string) Client {
 		log.Error("uuid could not be empty")
 	}
 	return Client{
-		baseURL:    APIURL + project,
+		baseURL:    apiURL + project,
 		authBearer: "Bearer " + uuid,
 		http:       new(http.Client),
 	}

@@ -22,8 +22,8 @@ func InitLogger() {
 	formatter := logging.NewBackendFormatter(logHandler, format)
 
 	logger := logging.AddModuleLevel(logHandler)
-	logger.SetLevel(logging.DEBUG, "")
-	logger.SetLevel(logging.DEBUG, "rp.logger")
+	logger.SetLevel(logging.ERROR, "")
+	logger.SetLevel(logging.ERROR, "rp.logger")
 	logging.SetBackend(logger, formatter)
 }
 
