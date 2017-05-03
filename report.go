@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"time"
 )
 
 // XMLReport identifies JUnit XML format specification that Hudson supports
@@ -56,6 +57,17 @@ func LoadXMLReport(dirName string) (*XMLReport, error) {
 	return &XMLReport{
 		xmlSuites: report,
 	}, nil
+}
+
+//
+func (report *XMLReport) GetLaunchStartTime() time.Time {
+	return parseTimeStamp(report.xmlSuites[0].TimeStamp)
+}
+
+//
+func (report *XMLReport) GetLaunchEndTime() time.Time {
+	lastIndex := len(report.xmlSuites) - 1
+	return parseTimeStamp(report.xmlSuites[lastIndex].TimeStamp)
 }
 
 // parseXMLReport is used for parsing xml report sorted by suite start time
