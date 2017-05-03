@@ -7,51 +7,59 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
-	"time"
 )
 
-func PublishReport(reportDir string, launch *Launch, c Client) {
-	xSuites, err := parseJunitXMLReport(reportDir)
-	if err != nil {
-		log.Critical(err)
-		return
-	}
-	launchStartTime, _ := time.Parse(TimestampLayout, xSuites[0].TimeStamp)
-	launch.StartTime = launchStartTime
-	launchID := c.StartLaunch(launch)
-	if launchID == nil {
-		log.Critical("could not start launch")
-		return
-	}
-
-	for i := 0; i < len(xSuites); i++ {
-		xSuite := xSuites[i]
-		suiteStartTime, _ := time.Parse(TimestampLayout, xSuite.TimeStamp)
-		// TODO: end time
-		suiteID := c.StartTestItem("", &TestItem{
-			LaunchID:    launchID.ID,
-			Type:        TestItemTypeSuite,
-			StartTime:   suiteStartTime,
-			Name:        xSuite.Name,
-			Description: xSuite.PackageName,
-		})
-
-		//finis suite
-		c.FinishTestItem(suiteID.ID, &ExecutionResult{
-			Status:  ExecutionStatusFailed,
-			EndTime: suiteStartTime.Add(time.Duration(xSuite.Time)),
-		})
-	}
-
-	launchEndTime, _ := time.Parse(TimestampLayout, xSuites[len(xSuites)].TimeStamp)
-	c.FinishLaunch(launchID.ID, &ExecutionResult{
-		Status:  ExecutionStatusFailed,
-		EndTime: launchEndTime,
-	})
+// XMLReport identifies JUnit XML format specification that Hudson supports
+type XMLReport struct {
+	xmlSuites []xmlSuite
 }
 
-// parseJunitXMLReport is used for parsing Junit xml report is a sorted by suite time order
-func parseJunitXMLReport(reportDir string) ([]xmlSuite, error) {
+type xmlSuite struct {
+	XMLName     string        `xml:"testsuite"`
+	ID          int           `xml:"id,attr"`
+	Name        string        `xml:"name,attr"`
+	PackageName string        `xml:"package,attr"`
+	TimeStamp   string        `xml:"timestamp,attr"`
+	Time        float64       `xml:"time,attr"`
+	HostName    string        `xml:"hostname,attr"`
+	Tests       int           `xml:"tests,attr"`
+	Failures    int           `xml:"failures,attr"`
+	Errors      int           `xml:"errors,attr"`
+	Properties  xmlProperties `xml:"properties"`
+	Cases       []xmlTest     `xml:"testcase"`
+	SystemOut   string        `xml:"system-out"`
+	SystemErr   string        `xml:"system-err"`
+}
+
+type xmlProperties struct {
+}
+
+type xmlTest struct {
+	Name      string      `xml:"name,attr"`
+	ClassName string      `xml:"classname,attr"`
+	Time      float64     `xml:"time,attr"`
+	Failure   *xmlFailure `xml:"failure,omitempty"`
+}
+
+type xmlFailure struct {
+	Type    string `xml:"type,attr"`
+	Message string `xml:"message,attr"`
+	Details string `xml:",chardata"`
+}
+
+// LoadXMLReport is used for loading JUnit XML report from specified directory
+func LoadXMLReport(dirName string) (*XMLReport, error) {
+	report, err := parseXMLReport(dirName)
+	if err != nil {
+		return nil, err
+	}
+	return &XMLReport{
+		xmlSuites: report,
+	}, nil
+}
+
+// parseXMLReport is used for parsing xml report sorted by suite start time
+func parseXMLReport(reportDir string) ([]xmlSuite, error) {
 
 	if len(reportDir) == 0 {
 		return nil, errors.New("report dir could not be empty")
@@ -73,23 +81,24 @@ func parseJunitXMLReport(reportDir string) ([]xmlSuite, error) {
 			log.Error(err)
 			continue
 		}
-		b, _ := ioutil.ReadAll(xmlFile)
+
+		b, err := ioutil.ReadAll(xmlFile)
+		if err != nil {
+			log.Error(err)
+			continue
+		}
+
 		var xSuite xmlSuite
 		xml.Unmarshal(b, &xSuite)
 		xSuites[i] = xSuite
 	}
 
-	// sort by time
+	// sort by start time
 	sort.Slice(xSuites, func(i, j int) bool {
-		t1, _ := time.Parse(TimestampLayout, xSuites[i].TimeStamp)
-		t2, _ := time.Parse(TimestampLayout, xSuites[j].TimeStamp)
+		t1 := parseTimeStamp(xSuites[i].TimeStamp)
+		t2 := parseTimeStamp(xSuites[j].TimeStamp)
 		return t1.Before(t2)
 	})
-
-	// debug
-	for i := 0; i < len(xSuites); i++ {
-		log.Debugf("Suite %d time: %s \n", xSuites[i].ID, xSuites[i].TimeStamp)
-	}
 
 	return xSuites, nil
 }

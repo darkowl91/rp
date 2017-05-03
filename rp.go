@@ -7,8 +7,6 @@ import (
 )
 
 const (
-	apiURL = "http://10.48.128.12:80/api/v1/"
-
 	// TimestampLayout can be used with time.Parse to create time.Time values from strings.
 	// It is an ISO 8601 UTC timestamp with a zero offset.
 	TimestampLayout = "2006-01-02T15:04:05"
@@ -49,7 +47,7 @@ const (
 )
 
 // NewClient creates a RP Client for specified project and user unique id
-func NewClient(project, uuid string) Client {
+func NewClient(apiURL, project, uuid string) Client {
 	if len(project) == 0 {
 		log.Error("project could not be empty")
 	}
@@ -57,16 +55,16 @@ func NewClient(project, uuid string) Client {
 		log.Error("uuid could not be empty")
 	}
 	return Client{
-		baseURL:    apiURL + project,
+		baseURL:    joinURL(apiURL, project),
 		authBearer: "Bearer " + uuid,
 		http:       new(http.Client),
 	}
 }
 
-// createNewRequest used for building new http.Request to RP API with default headers
+// createNewRequest is used for building new http.Request to RP API with default headers
 // apiUrl should start from "/" e.g. '/launch'
 func (c *Client) createNewRequest(method string, apiURL string, payload []byte) (*http.Request, error) {
-	req, err := http.NewRequest(method, c.baseURL+apiURL, bytes.NewBuffer(payload))
+	req, err := http.NewRequest(method, joinURL(c.baseURL, apiURL), bytes.NewBuffer(payload))
 	req.Header.Add("Authorization", c.authBearer)
 	req.Header.Add("Content-Type", "application/json;charset=utf-8")
 	return req, err
@@ -78,9 +76,9 @@ func (c *Client) request(method, apiURL string, payload []byte) (*http.Response,
 	if err != nil {
 		return nil, err
 	}
-	log.Debugf("RP Request: %v", req)
+	log.Debugf("rp request: %v", req)
 	resp, err := c.http.Do(req)
-	log.Debugf("RP Responce: %v", resp)
+	log.Debugf("rp responce: %v", resp)
 	return resp, err
 }
 

@@ -87,6 +87,7 @@ type LogMessage struct {
 	Level   string    `json:"level"`
 }
 
+// MarshalJSON with custom time format
 func (msg *LogMessage) MarshalJSON() ([]byte, error) {
 	type Alias LogMessage
 	return json.Marshal(&struct {
@@ -96,40 +97,4 @@ func (msg *LogMessage) MarshalJSON() ([]byte, error) {
 		Alias: (*Alias)(msg),
 		Time:  msg.Time.Format(TimestampLayout),
 	})
-}
-
-type xmlSuite struct {
-	XMLName     string  `xml:"testsuite"`
-	ID          int     `xml:"id,attr"`
-	Name        string  `xml:"name,attr"`
-	PackageName string  `xml:"package,attr"`
-	TimeStamp   string  `xml:"timestamp,attr"`
-	Time        float64 `xml:"time,attr"`
-	HostName    string  `xml:"hostname,attr"`
-
-	Tests    int `xml:"tests,attr"`
-	Failures int `xml:"failures,attr"`
-	Errors   int `xml:"errors,attr"`
-
-	Properties properties `xml:"properties"`
-	Cases      []xmlTest  `xml:"testcase"`
-
-	SystemOut string `xml:"system-out"`
-	SystemErr string `xml:"system-err"`
-}
-
-type properties struct {
-}
-
-type xmlTest struct {
-	Name      string      `xml:"name,attr"`
-	ClassName string      `xml:"classname,attr"`
-	Time      float64     `xml:"time,attr"`
-	Failure   *xmlFailure `xml:"failure,omitempty"`
-}
-
-type xmlFailure struct {
-	Type    string `xml:"type,attr"`
-	Message string `xml:"message,attr"`
-	Details string `xml:",chardata"`
 }

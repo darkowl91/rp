@@ -5,7 +5,11 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"net/url"
 	"os"
+	"path"
+
+	"time"
 
 	logging "github.com/op/go-logging"
 )
@@ -41,4 +45,24 @@ func decodeError(r io.Reader) error {
 		return errors.New("no responce error")
 	}
 	return fmt.Errorf("code: %d, msg: %s", e.Code, e.Message)
+}
+
+// joinURL join URL parts as path segments
+func joinURL(base string, parts ...string) string {
+	u, err := url.Parse(base)
+	if err != nil {
+		log.Errorf("could not parse base '%s' url: %v", base, err)
+		return base
+	}
+	u.Path = path.Join(u.Path, path.Join(parts...))
+	return u.String()
+}
+
+// parseTimeStamp parsing with TimestampLayout
+func parseTimeStamp(timeStr string) time.Time {
+	t, err := time.Parse(TimestampLayout, timeStr)
+	if err != nil {
+		log.Errorf("could not parse timestamp: %v", err)
+	}
+	return t
 }
