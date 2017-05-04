@@ -84,7 +84,7 @@ func parseXMLReport(reportDir string) ([]xmlSuite, error) {
 	}
 
 	n := len(files)
-	xSuites := make([]xmlSuite, n)
+	xSuites := make([]xmlSuite, 0)
 
 	// read all files in report dir
 	for i := 0; i < n; i++ {
@@ -109,7 +109,7 @@ func parseXMLReport(reportDir string) ([]xmlSuite, error) {
 
 		var xSuite xmlSuite
 		xml.Unmarshal(b, &xSuite)
-		xSuites[i] = xSuite
+		xSuites = append(xSuites, xSuite)
 	}
 
 	// sort by start time
