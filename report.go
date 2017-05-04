@@ -67,7 +67,9 @@ func (report *XMLReport) GetLaunchStartTime() time.Time {
 //
 func (report *XMLReport) GetLaunchEndTime() time.Time {
 	lastIndex := len(report.xmlSuites) - 1
-	return parseTimeStamp(report.xmlSuites[lastIndex].TimeStamp)
+	lastSuiteStart := parseTimeStamp(report.xmlSuites[lastIndex].TimeStamp)
+	duration := time.Duration(report.xmlSuites[lastIndex].Time)
+	return lastSuiteStart.Add(duration)
 }
 
 // parseXMLReport is used for parsing xml report sorted by suite start time

@@ -5,10 +5,10 @@ import (
 )
 
 const (
-	uuid      = "26169e7b-f3fc-46a8-8ef6-a41f8ee30fcd"
-	project   = "WFR-API"
+	uuid      = ""
+	project   = ""
 	reportDir = "report"
-	apiURL    = "http://10.48.128.12:80/api/v1"
+	apiURL    = ""
 )
 
 func main() {
