@@ -33,7 +33,7 @@ func main() {
 		Name:      "api test launch",
 		StartTime: launchStart,
 		Mode:      rp.ModeDebug,
-		Tags:      []string{"R50", "debug", "go"},
+		Tags:      []string{"R50", "debug", "go", "mw01"},
 	})
 
 	// start post report

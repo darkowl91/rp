@@ -60,9 +60,14 @@ func joinURL(base string, parts ...string) string {
 
 // parseTimeStamp parsing with TimestampLayout
 func parseTimeStamp(timeStr string) time.Time {
-	t, err := time.Parse(TimestampLayout, timeStr)
+	t, err := time.Parse(xmlTimestampLayout, timeStr)
 	if err != nil {
 		log.Error(err)
 	}
 	return t
+}
+
+// converts seconds to duration
+func secondsToDuration(sec float64) time.Duration {
+	return time.Duration(int64(sec * float64(time.Second)))
 }

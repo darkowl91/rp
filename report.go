@@ -11,6 +11,10 @@ import (
 	"time"
 )
 
+const (
+	xmlTimestampLayout = "2006-01-02T15:04:05"
+)
+
 // XMLReport identifies JUnit XML format specification that Hudson supports
 type XMLReport struct {
 	xmlSuites []xmlSuite
@@ -79,8 +83,8 @@ func (report *XMLReport) LaunchStartTime() time.Time {
 func (report *XMLReport) LaunchEndTime() time.Time {
 	lastIndex := len(report.xmlSuites) - 1
 	lastSuiteStart := parseTimeStamp(report.xmlSuites[lastIndex].TimeStamp)
-	duration := time.Duration(report.xmlSuites[lastIndex].Time)
-	return lastSuiteStart.Add(duration)
+	d := secondsToDuration(report.xmlSuites[lastIndex].Time)
+	return lastSuiteStart.Add(d)
 }
 
 //
@@ -99,7 +103,8 @@ func (report *XMLReport) Suite(i int) *TestItem {
 func (report *XMLReport) SuiteResult(i int) *ExecutionResult {
 	xSuite := report.xmlSuites[i]
 	suiteStart := parseTimeStamp(xSuite.TimeStamp)
-	suiteEnd := suiteStart.Add(time.Duration(xSuite.Time))
+	d := secondsToDuration(xSuite.Time)
+	suiteEnd := suiteStart.Add(d)
 
 	var status = ExecutionStatusPassed
 	if xSuite.Tests == 0 {
@@ -133,7 +138,8 @@ func (report *XMLReport) TestCaseResult(i, j int) *ExecutionResult {
 	xSuite := report.xmlSuites[i]
 	suiteStart := parseTimeStamp(xSuite.TimeStamp)
 	xCase := xSuite.Cases[j]
-	xCaseEnd := suiteStart.Add(time.Duration(xCase.Time))
+	d := secondsToDuration(xCase.Time)
+	xCaseEnd := suiteStart.Add(d)
 	var status = ExecutionStatusPassed
 	if xCase.Failure != nil {
 		status = ExecutionStatusFailed
@@ -155,7 +161,8 @@ func (report *XMLReport) TestCasefailure(i, j int) *LogMessage {
 	xSuite := report.xmlSuites[i]
 	suiteStart := parseTimeStamp(xSuite.TimeStamp)
 	xCase := xSuite.Cases[j]
-	xCaseEnd := suiteStart.Add(time.Duration(xCase.Time))
+	d := secondsToDuration(xCase.Time)
+	xCaseEnd := suiteStart.Add(d)
 
 	return &LogMessage{
 		Time:    xCaseEnd,
@@ -176,9 +183,8 @@ func parseXMLReport(reportDir string) ([]xmlSuite, error) {
 	}
 
 	n := len(files)
-	xSuites := make([]xmlSuite, 0) // empty slice
+	xSuites := make([]xmlSuite, 0)
 
-	// read all files in report dir
 	for i := 0; i < n; i++ {
 		f := files[i]
 		if filepath.Ext(f.Name()) != ".xml" || f.IsDir() {

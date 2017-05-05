@@ -9,7 +9,7 @@ import (
 const (
 	// TimestampLayout can be used with time.Parse to create time.Time values from strings.
 	// It is an ISO 8601 UTC timestamp with a zero offset.
-	TimestampLayout = "2006-01-02T15:04:05"
+	TimestampLayout = "2006-01-02T15:04:05.000-07:00"
 
 	// TestItemTypeSuite - SUITE
 	TestItemTypeSuite = "SUITE"
