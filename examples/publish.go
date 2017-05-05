@@ -1,17 +1,12 @@
-package main
+package examples
 
 import (
 	"github.com/owl/rp"
 )
 
-const (
-	uuid      = "26169e7b-f3fc-46a8-8ef6-a41f8ee30fcd"
-	project   = "WFR-API"
-	reportDir = "report"
-	apiURL    = "http://10.48.128.12:80/api/v1/"
-)
+var reportDir = "report"
 
-func main() {
+func examplePublishReport() {
 	// enable logging
 	rp.InitLogger()
 

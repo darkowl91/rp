@@ -10,7 +10,3 @@ debug
 
 #bin
 *.exe
-*.bat
-
-#report
-report

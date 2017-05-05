@@ -1,4 +1,4 @@
-package api
+package examples
 
 import (
 	"time"
@@ -57,7 +57,7 @@ func exampleAPI() {
 	// update test result
 	rpClient.FinishTestItem(testID.ID, &rp.ExecutionResult{
 		EndTime: time.Now(),               // test end time
-		Status:  rp.ExecutionStatusPassed, //test result ['PASSED', 'FAILED', 'SKIPPED']
+		Status:  rp.ExecutionStatusPassed, // test result ['PASSED', 'FAILED', 'SKIPPED']
 	})
 	// update suite to PASSED state by  provideding execution result result
 	rpClient.FinishTestItem(suiteID.ID, &rp.ExecutionResult{
