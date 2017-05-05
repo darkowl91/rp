@@ -17,7 +17,7 @@ type Client struct {
 type Launch struct {
 	Name        string    `json:"name"`
 	Description string    `json:"description,omitempty"`
-	Mode        string    `json:"mode,omitempty"`
+	Mode        Mode      `json:"mode,omitempty"`
 	StartTime   time.Time `json:"start_time"`
 	Tags        []string  `json:"tags,omitempty"`
 }
@@ -36,12 +36,12 @@ func (launch *Launch) MarshalJSON() ([]byte, error) {
 
 // TestItem identifies a test suite, test, test method (step) fot test run.
 type TestItem struct {
-	LaunchID    string    `json:"launch_id"`
-	Name        string    `json:"name"`
-	Description string    `json:"description,omitempty"`
-	StartTime   time.Time `json:"start_time"`
-	Type        string    `json:"type"`
-	Tags        []string  `json:"tags,omitempty"`
+	LaunchID    string       `json:"launch_id"`
+	Name        string       `json:"name"`
+	Description string       `json:"description,omitempty"`
+	StartTime   time.Time    `json:"start_time"`
+	Type        TestItemType `json:"type"`
+	Tags        []string     `json:"tags,omitempty"`
 }
 
 // MarshalJSON with custom time format
@@ -58,8 +58,8 @@ func (item *TestItem) MarshalJSON() ([]byte, error) {
 
 // ExecutionResult is used to update executed TestItem.
 type ExecutionResult struct {
-	EndTime time.Time `json:"end_time"`
-	Status  string    `json:"status"`
+	EndTime time.Time       `json:"end_time"`
+	Status  ExecutionStatus `json:"status"`
 }
 
 // MarshalJSON with custom time format
@@ -84,7 +84,7 @@ type LogMessage struct {
 	ItemID  string    `json:"item_id"`
 	Time    time.Time `json:"time"`
 	Message string    `json:"message"`
-	Level   string    `json:"level"`
+	Level   LogLevel  `json:"level"`
 }
 
 // MarshalJSON with custom time format

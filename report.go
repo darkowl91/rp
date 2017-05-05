@@ -106,7 +106,7 @@ func (report *XMLReport) SuiteResult(i int) *ExecutionResult {
 	d := secondsToDuration(xSuite.Time)
 	suiteEnd := suiteStart.Add(d)
 
-	var status = ExecutionStatusPassed
+	status := ExecutionStatusPassed
 	if xSuite.Tests == 0 {
 		status = ExecutionStatusSkipped
 	} else if xSuite.Failures > 0 {

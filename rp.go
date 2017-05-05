@@ -6,44 +6,48 @@ import (
 	"net/http"
 )
 
+type TestItemType string
+type ExecutionStatus string
+type LogLevel string
+type Mode string
+
 const (
 	// TimestampLayout can be used with time.Parse to create time.Time values from strings.
-	// It is an ISO 8601 UTC timestamp with a zero offset.
 	TimestampLayout = "2006-01-02T15:04:05.000-07:00"
 
 	// TestItemTypeSuite - SUITE
-	TestItemTypeSuite = "SUITE"
+	TestItemTypeSuite TestItemType = "SUITE"
 	// TestItemTypeStep - STEP
-	TestItemTypeStep = "STEP"
+	TestItemTypeStep TestItemType = "STEP"
 	// TestItemTypeStory - STORY
-	TestItemTypeStory = "STORY"
+	TestItemTypeStory TestItemType = "STORY"
 	// TestItemTypeTest - TEST
-	TestItemTypeTest = "TEST"
+	TestItemTypeTest TestItemType = "TEST"
 	// TestItemTypeScenario - SCENARIO
-	TestItemTypeScenario = "SCENARIO"
+	TestItemTypeScenario TestItemType = "SCENARIO"
 
 	// ExecutionStatusPassed - PASSED
-	ExecutionStatusPassed = "PASSED"
+	ExecutionStatusPassed ExecutionStatus = "PASSED"
 	// ExecutionStatusFailed - FAILED
-	ExecutionStatusFailed = "FAILED"
+	ExecutionStatusFailed ExecutionStatus = "FAILED"
 	// ExecutionStatusSkipped - SKIPPED
-	ExecutionStatusSkipped = "SKIPPED"
+	ExecutionStatusSkipped ExecutionStatus = "SKIPPED"
 
 	// LogLevelTrace - TRACE
-	LogLevelTrace = "TRACE"
+	LogLevelTrace LogLevel = "TRACE"
 	// LogLevelDebug - DEBUG
-	LogLevelDebug = "DEBUG"
+	LogLevelDebug LogLevel = "DEBUG"
 	// LogLevelInfo - INFO
-	LogLevelInfo = "INFO"
+	LogLevelInfo LogLevel = "INFO"
 	// LogLevelWarn - WARN
-	LogLevelWarn = "WARN"
+	LogLevelWarn LogLevel = "WARN"
 	// LogLevelError - ERROR
-	LogLevelError = "ERROR"
+	LogLevelError LogLevel = "ERROR"
 
 	// ModeDebug - DEBUG
-	ModeDebug = "DEBUG"
+	ModeDebug Mode = "DEBUG"
 	// ModeDefault - DEFAULT
-	ModeDefault = "DEFAULT"
+	ModeDefault Mode = "DEFAULT"
 )
 
 // NewClient creates a RP Client for specified project and user unique id
