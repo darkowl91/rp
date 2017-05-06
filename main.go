@@ -6,11 +6,10 @@ import (
 	"os"
 )
 
-const (
-	version = "0.1a"
-)
-
 var (
+	// Version for the application, passed on build
+	Version = "No Version Provided"
+
 	reportDir string
 )
 
@@ -18,7 +17,7 @@ func main() {
 	flag.Usage = func() {
 		u := " Usage:\n"
 		u += "  rp [OPTIONS] (DIR|FILE)\n\n"
-		u += "Options:\n"
+		u += " Options:\n"
 		u += "	-r,	--report	XML Report dir path\n"
 		u += "	-H	--rpHost	Report Portal host\n"
 		u += "	-m	--mode		Report Portal mode\n"
@@ -31,5 +30,7 @@ func main() {
 	}
 
 	flag.Usage()
+
+	fmt.Print(Version)
 
 }

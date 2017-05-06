@@ -9,16 +9,16 @@ GOARCH=amd64
 mkdir -p $RELEASE_DIR
 
 GOOS=windows
-go build -o rp-client.exe
+go build -ldflags "-X main.Version=$RP_VERSION" -o rp-client.exe
 zip -r $RELEASE_DIR/$RP_NAME.$GOOS-$GOARCH.zip rp-client.exe
 rm rp-client.exe
 
 GOOS=darwin
-go build -o rp-client
+go build -ldflags "-X main.Version=$RP_VERSION" -o rp-client
 tar -czvf $RELEASE_DIR/$RP_NAME.$GOOS-$GOARCH.tar.gz rp-client
 
 GOOS=linux
-go build -o rp-client
+go build -ldflags "-X main.Version=$RP_VERSION" -o rp-client
 tar -czvf $RELEASE_DIR/$RP_NAME.$GOOS-$GOARCH.tar.gz rp-client
 rm ./rp-client
 
