@@ -25,10 +25,10 @@ func examplePublishReport() {
 
 	// post new launch to rp
 	launchID := rpClient.StartLaunch(&rp.Launch{
-		Name:      "api test launch",
+		Name:      "EXAMPLE PUBLISH LAUNCH NAME",
 		StartTime: launchStart,
 		Mode:      rp.ModeDebug,
-		Tags:      []string{"R50", "debug", "go", "mw01"},
+		Tags:      []string{"example", "test", "go"},
 	})
 
 	// start post report
@@ -45,7 +45,7 @@ func examplePublishReport() {
 			tCase.LaunchID = launchID.ID
 			caseID := rpClient.StartTestItem(suiteID.ID, tCase)
 
-			// pos log in case we have failure
+			// post logs when have failure
 			if report.HasTestCasefailure(i, j) {
 				// post message
 				failure := report.TestCasefailure(i, j)
