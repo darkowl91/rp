@@ -1,7 +1,7 @@
 package examples
 
 import (
-	"github.com/owl/rp"
+	"github.com/darkowl91/rp"
 )
 
 var reportDir = "report"
