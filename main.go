@@ -69,8 +69,6 @@ func main() {
 	flag.BoolVar(&versionFlag, "version", false, "Print version.")
 	flag.Parse()
 
-	rp.InitLogger()
-
 	if versionFlag {
 		fmt.Printf("rp version: %s\n", Version)
 		os.Exit(1)
@@ -116,7 +114,7 @@ func main() {
 
 	if err != nil {
 		fmt.Printf("could not load report")
-		os.Exit(0)
+		os.Exit(1)
 	}
 
 	if len(launchFlag) == 0 {
@@ -131,6 +129,7 @@ func main() {
 	launch.StartTime = launchStart
 	launch.Name = launchFlag
 	if debugFlag {
+		rp.InitLogger()
 		launch.Mode = rp.ModeDebug
 	}
 	if len(tagsFlag) != 0 {
@@ -154,7 +153,16 @@ func main() {
 			tCase := report.TestCase(i, j)
 			tCase.LaunchID = launchID.ID
 			tCaseID := rpClient.StartTestItem(suiteID.ID, tCase)
-			//TODO:
+
+			if report.HasTestCasefailure(i, j) {
+				tFailure := report.TestCasefailure(i, j)
+				tFailure.ItemID = tCaseID.ID
+				rpClient.SendMesssage(tFailure)
+				fDetails := report.TestCaseFailureDetails(i, j)
+				fDetails.ItemID = tCaseID.ID
+				rpClient.SendMesssage(fDetails)
+			}
+
 			tResult := report.TestCaseResult(i, j)
 			rpClient.FinishTestItem(tCaseID.ID, tResult)
 		}
@@ -168,4 +176,6 @@ func main() {
 	rpClient.FinishLaunch(launchID.ID, &rp.ExecutionResult{
 		EndTime: launchEnd,
 	})
+
+	os.Exit(0)
 }

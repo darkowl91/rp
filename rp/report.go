@@ -64,12 +64,12 @@ func LoadXMLReport(dirName string) (*XMLReport, error) {
 	}, nil
 }
 
-//
+// SuitesCount provides suite count for current xml test result report
 func (report *XMLReport) SuitesCount() int {
 	return len(report.xmlSuites)
 }
 
-//
+// TesCaseCount provides test case count for current suite
 func (report *XMLReport) TesCaseCount(i int) int {
 	return len(report.xmlSuites[i].Cases)
 }
@@ -87,7 +87,7 @@ func (report *XMLReport) LaunchEndTime() time.Time {
 	return lastSuiteStart.Add(d)
 }
 
-//
+// Suite is used ot create new TestItem type SUITE for xml suite
 func (report *XMLReport) Suite(i int) *TestItem {
 	xSuite := report.xmlSuites[i]
 	suiteStart := parseTimeStamp(xSuite.TimeStamp)
@@ -99,7 +99,7 @@ func (report *XMLReport) Suite(i int) *TestItem {
 	}
 }
 
-//
+// SuiteResult is used ot create new ExecutionResult for xml suite
 func (report *XMLReport) SuiteResult(i int) *ExecutionResult {
 	xSuite := report.xmlSuites[i]
 	suiteStart := parseTimeStamp(xSuite.TimeStamp)
@@ -121,7 +121,7 @@ func (report *XMLReport) SuiteResult(i int) *ExecutionResult {
 	}
 }
 
-//
+// TestCase is used ot create new TestItem type STEP for xml test case
 func (report *XMLReport) TestCase(i, j int) *TestItem {
 	xSuite := report.xmlSuites[i]
 	suiteStart := parseTimeStamp(xSuite.TimeStamp)
@@ -133,7 +133,7 @@ func (report *XMLReport) TestCase(i, j int) *TestItem {
 	}
 }
 
-//
+// TestCaseResult is used ot create new ExecutionResult for xml test case
 func (report *XMLReport) TestCaseResult(i, j int) *ExecutionResult {
 	xSuite := report.xmlSuites[i]
 	suiteStart := parseTimeStamp(xSuite.TimeStamp)
@@ -151,12 +151,12 @@ func (report *XMLReport) TestCaseResult(i, j int) *ExecutionResult {
 	}
 }
 
-//
+// HasTestCasefailure is used to check xml failure for given xml suite and test case
 func (report *XMLReport) HasTestCasefailure(i, j int) bool {
 	return report.xmlSuites[i].Cases[j].Failure != nil
 }
 
-//
+// TestCasefailure is used to create new LogMessage with failure message for given xml suite and test case
 func (report *XMLReport) TestCasefailure(i, j int) *LogMessage {
 	xSuite := report.xmlSuites[i]
 	suiteStart := parseTimeStamp(xSuite.TimeStamp)
@@ -168,6 +168,20 @@ func (report *XMLReport) TestCasefailure(i, j int) *LogMessage {
 		Time:    xCaseEnd,
 		Level:   LogLevelError,
 		Message: xCase.Failure.Message,
+	}
+}
+
+// TestCaseFailureDetails is used to create new LogMessage with failure details for given xml suite and test case
+func (report *XMLReport) TestCaseFailureDetails(i, j int) *LogMessage {
+	xSuite := report.xmlSuites[i]
+	suiteStart := parseTimeStamp(xSuite.TimeStamp)
+	xCase := xSuite.Cases[j]
+	d := secondsToDuration(xCase.Time)
+	xCaseEnd := suiteStart.Add(d)
+	return &LogMessage{
+		Time:    xCaseEnd,
+		Level:   LogLevelInfo,
+		Message: xCase.Failure.Details,
 	}
 }
 
