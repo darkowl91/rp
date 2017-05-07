@@ -1,6 +1,6 @@
 #!/bin/bash
 
-RP_VERSION="0.1a"
+RP_VERSION="0.1.0"
 RP_NAME="rp-client-"$RP_VERSION
 
 RELEASE_DIR=./release

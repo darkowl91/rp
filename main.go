@@ -29,7 +29,7 @@ var (
 func main() {
 	flag.Usage = func() {
 		u := " Usage:\n"
-		u += "  rp [OPTIONS] (DIR|FILE)\n\n"
+		u += "  rp-client [OPTIONS] (DIR|FILE)\n\n"
 		u += " Options:\n"
 		u += "	-r	--rp		Report Portal host\n"
 		u += "	-d	--debug		Report Portal debug mode\n"
