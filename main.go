@@ -71,12 +71,12 @@ func main() {
 
 	if versionFlag {
 		fmt.Printf("rp version: %s\n", Version)
-		os.Exit(1)
+		os.Exit(0)
 	}
 
 	if helpFlag {
 		flag.Usage()
-		os.Exit(1)
+		os.Exit(0)
 	}
 
 	reportDir = flag.Arg(0)
