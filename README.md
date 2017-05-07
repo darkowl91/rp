@@ -15,7 +15,7 @@ To install the library, simply
 
 ## Authentication
 
-Web API functionality is available wit authenticating.
+Web API functionality is available with authenticating.
 To get your access token you should be a Report Portal user, if so take token
 from user profile page
 

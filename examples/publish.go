@@ -45,7 +45,7 @@ func examplePublishReport() {
 			tCase.LaunchID = launchID.ID
 			caseID := rpClient.StartTestItem(suiteID.ID, tCase)
 
-			// post logs when have failure
+			// post logs on failure
 			if report.HasTestCasefailure(i, j) {
 				// post message
 				failure := report.TestCasefailure(i, j)
