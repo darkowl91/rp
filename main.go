@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 
+	"strings"
+
 	"github.com/darkowl91/rp-client/rp"
 )
 
@@ -92,4 +94,78 @@ func main() {
 		os.Exit(1)
 	}
 
+	if len(hostFlag) == 0 {
+		fmt.Println("report portal host cold not be empty")
+		flag.Usage()
+		os.Exit(1)
+	}
+
+	if len(projectFlag) == 0 {
+		fmt.Println("report portal project cold not be empty")
+		flag.Usage()
+		os.Exit(1)
+	}
+
+	if len(uuidFlag) == 0 {
+		fmt.Println("report portal user id could not be empty")
+		flag.Usage()
+		os.Exit(1)
+	}
+
+	report, err := rp.LoadXMLReport(reportDir)
+
+	if err != nil {
+		fmt.Printf("could not load report")
+		os.Exit(0)
+	}
+
+	if len(launchFlag) == 0 {
+		fmt.Println("report portal launch name could not be empty")
+		flag.Usage()
+		os.Exit(1)
+	}
+
+	launchStart := report.LaunchStartTime()
+	fmt.Printf("launch start: %s\n", launchStart.Format(rp.TimestampLayout))
+	launch := &rp.Launch{}
+	launch.StartTime = launchStart
+	launch.Name = launchFlag
+	if debugFlag {
+		launch.Mode = rp.ModeDebug
+	}
+	if len(tagsFlag) != 0 {
+		launch.Tags = strings.Split(tagsFlag, ",")
+	}
+
+	rpClient := rp.NewClient(hostFlag, projectFlag, uuidFlag)
+
+	launchID := rpClient.StartLaunch(launch)
+	if launchID == nil {
+		fmt.Println("could not start launch")
+		os.Exit(1)
+	}
+
+	for i := 0; i < report.SuitesCount(); i++ {
+		suite := report.Suite(i)
+		suite.LaunchID = launchID.ID
+		suiteID := rpClient.StartTestItem("", suite)
+
+		for j := 0; j < report.TesCaseCount(i); j++ {
+			tCase := report.TestCase(i, j)
+			tCase.LaunchID = launchID.ID
+			tCaseID := rpClient.StartTestItem(suiteID.ID, tCase)
+			//TODO:
+			tResult := report.TestCaseResult(i, j)
+			rpClient.FinishTestItem(tCaseID.ID, tResult)
+		}
+
+		suiteResult := report.SuiteResult(i)
+		rpClient.FinishTestItem(suiteID.ID, suiteResult)
+	}
+
+	launchEnd := report.LaunchEndTime()
+	fmt.Printf("launch end: %s\n", launchEnd.Format(rp.TimestampLayout))
+	rpClient.FinishLaunch(launchID.ID, &rp.ExecutionResult{
+		EndTime: launchEnd,
+	})
 }

@@ -3,7 +3,7 @@ package examples
 import (
 	"time"
 
-	"github.com/darkowl91/rp"
+	"github.com/darkowl91/rp-client/rp"
 )
 
 const (
