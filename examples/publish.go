@@ -46,9 +46,9 @@ func examplePublishReport() {
 			caseID := rpClient.StartTestItem(suiteID.ID, tCase)
 
 			// post logs on failure
-			if report.HasTestCasefailure(i, j) {
+			if report.HasTestCaseFailure(i, j) {
 				// post message
-				failure := report.TestCasefailure(i, j)
+				failure := report.TestCaseFailure(i, j)
 				failure.ItemID = caseID.ID
 				rpClient.SendMesssage(failure)
 			}

@@ -151,13 +151,13 @@ func (report *XMLReport) TestCaseResult(i, j int) *ExecutionResult {
 	}
 }
 
-// HasTestCasefailure is used to check xml failure for given xml suite and test case
-func (report *XMLReport) HasTestCasefailure(i, j int) bool {
+// HasTestCaseFailure is used to check xml failure for given xml suite and test case
+func (report *XMLReport) HasTestCaseFailure(i, j int) bool {
 	return report.xmlSuites[i].Cases[j].Failure != nil
 }
 
-// TestCasefailure is used to create new LogMessage with failure message for given xml suite and test case
-func (report *XMLReport) TestCasefailure(i, j int) *LogMessage {
+// TestCaseFailure is used to create new LogMessage with failure message for given xml suite and test case
+func (report *XMLReport) TestCaseFailure(i, j int) *LogMessage {
 	xSuite := report.xmlSuites[i]
 	suiteStart := parseTimeStamp(xSuite.TimeStamp)
 	xCase := xSuite.Cases[j]

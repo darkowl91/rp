@@ -154,8 +154,8 @@ func main() {
 			tCase.LaunchID = launchID.ID
 			tCaseID := rpClient.StartTestItem(suiteID.ID, tCase)
 
-			if report.HasTestCasefailure(i, j) {
-				tFailure := report.TestCasefailure(i, j)
+			if report.HasTestCaseFailure(i, j) {
+				tFailure := report.TestCaseFailure(i, j)
 				tFailure.ItemID = tCaseID.ID
 				rpClient.SendMesssage(tFailure)
 				fDetails := report.TestCaseFailureDetails(i, j)
