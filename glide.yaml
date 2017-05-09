@@ -1,0 +1,8 @@
+package: .
+import:
+- package: github.com/darkowl91/rp-client
+  version: ^0.1.0
+  subpackages:
+  - rp
+- package: github.com/op/go-logging
+  version: ^1.0.0

@@ -1,0 +1,10 @@
+hash: bf10b8aa6e28f9087f6c38f153b8bc794164a721882d304696f450c4fb9dac99
+updated: 2017-05-10T00:17:13.775027422+03:00
+imports:
+- name: github.com/darkowl91/rp-client
+  version: 273afcdb868e2d0a05743773699460092c260d54
+  subpackages:
+  - rp
+- name: github.com/op/go-logging
+  version: b2cb9fa56473e98db8caba80237377e83fe44db5
+testImports: []
