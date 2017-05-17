@@ -71,12 +71,12 @@ func main() {
 
 	if versionFlag {
 		fmt.Printf("rp version: %s\n", Version)
-		os.Exit(1)
+		os.Exit(0)
 	}
 
 	if helpFlag {
 		flag.Usage()
-		os.Exit(1)
+		os.Exit(0)
 	}
 
 	reportDir = flag.Arg(0)
@@ -154,8 +154,8 @@ func main() {
 			tCase.LaunchID = launchID.ID
 			tCaseID := rpClient.StartTestItem(suiteID.ID, tCase)
 
-			if report.HasTestCasefailure(i, j) {
-				tFailure := report.TestCasefailure(i, j)
+			if report.HasTestCaseFailure(i, j) {
+				tFailure := report.TestCaseFailure(i, j)
 				tFailure.ItemID = tCaseID.ID
 				rpClient.SendMesssage(tFailure)
 				fDetails := report.TestCaseFailureDetails(i, j)

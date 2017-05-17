@@ -59,12 +59,12 @@ func exampleAPI() {
 		EndTime: time.Now(),               // test end time
 		Status:  rp.ExecutionStatusPassed, // test result ['PASSED', 'FAILED', 'SKIPPED']
 	})
-	// update suite to PASSED state by  provideding execution result result
+	// update suite to PASSED state by providing execution result
 	rpClient.FinishTestItem(suiteID.ID, &rp.ExecutionResult{
 		EndTime: time.Now(),               // suite end time
 		Status:  rp.ExecutionStatusPassed, // suite result ['PASSED', 'FAILED', 'SKIPPED']
 	})
-	// update launch to PASSED state by  provideding execution result result
+	// update launch to PASSED state by providing execution result
 	rpClient.FinishLaunch(launchID.ID, &rp.ExecutionResult{
 		EndTime: time.Now(),               // launch end time
 		Status:  rp.ExecutionStatusPassed, // launch result ['PASSED', 'FAILED', 'SKIPPED']

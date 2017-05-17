@@ -151,13 +151,13 @@ func (report *XMLReport) TestCaseResult(i, j int) *ExecutionResult {
 	}
 }
 
-// HasTestCasefailure is used to check xml failure for given xml suite and test case
-func (report *XMLReport) HasTestCasefailure(i, j int) bool {
+// HasTestCaseFailure is used to check xml failure for given xml suite and test case
+func (report *XMLReport) HasTestCaseFailure(i, j int) bool {
 	return report.xmlSuites[i].Cases[j].Failure != nil
 }
 
-// TestCasefailure is used to create new LogMessage with failure message for given xml suite and test case
-func (report *XMLReport) TestCasefailure(i, j int) *LogMessage {
+// TestCaseFailure is used to create new LogMessage with failure message for given xml suite and test case
+func (report *XMLReport) TestCaseFailure(i, j int) *LogMessage {
 	xSuite := report.xmlSuites[i]
 	suiteStart := parseTimeStamp(xSuite.TimeStamp)
 	xCase := xSuite.Cases[j]
@@ -191,22 +191,23 @@ func parseXMLReport(reportDir string) ([]xmlSuite, error) {
 	if len(reportDir) == 0 {
 		return nil, errors.New("report dir could not be empty")
 	}
-	files, err := ioutil.ReadDir(reportDir)
-	if err != nil {
-		return nil, err
-	}
+
+	files := []string{}
+	filepath.Walk(reportDir, func(path string, f os.FileInfo, err error) error {
+		if filepath.Ext(f.Name()) != ".xml" || f.IsDir() {
+			log.Debugf("not report file '%s'", f.Name())
+		} else {
+			files = append(files, path)
+		}
+		return nil
+	})
 
 	n := len(files)
 	xSuites := make([]xmlSuite, 0)
 
 	for i := 0; i < n; i++ {
 		f := files[i]
-		if filepath.Ext(f.Name()) != ".xml" || f.IsDir() {
-			log.Debugf("not report file '%s'", f.Name())
-			continue
-		}
-
-		xmlFile, err := os.Open(filepath.Join(reportDir, f.Name()))
+		xmlFile, err := os.Open(f)
 		defer xmlFile.Close()
 		if err != nil {
 			log.Error(err)
