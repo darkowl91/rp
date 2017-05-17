@@ -191,22 +191,23 @@ func parseXMLReport(reportDir string) ([]xmlSuite, error) {
 	if len(reportDir) == 0 {
 		return nil, errors.New("report dir could not be empty")
 	}
-	files, err := ioutil.ReadDir(reportDir)
-	if err != nil {
-		return nil, err
-	}
+
+	files := []string{}
+	filepath.Walk(reportDir, func(path string, f os.FileInfo, err error) error {
+		if filepath.Ext(f.Name()) != ".xml" || f.IsDir() {
+			log.Debugf("not report file '%s'", f.Name())
+		} else {
+			files = append(files, path)
+		}
+		return nil
+	})
 
 	n := len(files)
 	xSuites := make([]xmlSuite, 0)
 
 	for i := 0; i < n; i++ {
 		f := files[i]
-		if filepath.Ext(f.Name()) != ".xml" || f.IsDir() {
-			log.Debugf("not report file '%s'", f.Name())
-			continue
-		}
-
-		xmlFile, err := os.Open(filepath.Join(reportDir, f.Name()))
+		xmlFile, err := os.Open(f)
 		defer xmlFile.Close()
 		if err != nil {
 			log.Error(err)
