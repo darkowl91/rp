@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strings"
 	"time"
 )
 
@@ -91,10 +92,12 @@ func (report *XMLReport) LaunchEndTime() time.Time {
 func (report *XMLReport) Suite(i int) *TestItem {
 	xSuite := report.xmlSuites[i]
 	suiteStart := parseTimeStamp(xSuite.TimeStamp)
+	xSuiteNames := []string{xSuite.PackageName, xSuite.Name}
+
 	return &TestItem{
 		Type:        TestItemTypeSuite,
 		StartTime:   suiteStart,
-		Name:        xSuite.PackageName + "." + xSuite.Name,
+		Name:        strings.Join(xSuiteNames, "."),
 		Description: fmt.Sprintf("%s %d", TestItemTypeSuite, xSuite.ID),
 	}
 }
