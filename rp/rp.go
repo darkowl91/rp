@@ -13,7 +13,7 @@ type Mode string
 
 const (
 	// TimestampLayout can be used with time.Parse to create time.Time values from strings.
-	TimestampLayout = "2006-01-02T15:04:05.000-07:00"
+	TimestampLayout = "2006-01-02T15:04:05.000Z"
 
 	// TestItemTypeSuite - SUITE
 	TestItemTypeSuite TestItemType = "SUITE"

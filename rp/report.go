@@ -12,10 +12,6 @@ import (
 	"time"
 )
 
-const (
-	xmlTimestampLayout = "2006-01-02T15:04:05"
-)
-
 // XMLReport identifies JUnit XML format specification that Hudson supports
 type XMLReport struct {
 	xmlSuites []xmlSuite
@@ -161,6 +157,11 @@ func (report *XMLReport) TestCaseResult(i, j int) *ExecutionResult {
 		EndTime: xCaseEnd,
 		Status:  status,
 	}
+}
+
+// HasTestCaseSkipped is used to check xml skipped value for given xml suite and test case
+func (report *XMLReport) HasTestCaseSkipped(i, j int) bool {
+	return report.xmlSuites[i].Cases[j].Skipped != nil
 }
 
 // HasTestCaseFailure is used to check xml failure for given xml suite and test case
