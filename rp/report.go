@@ -32,6 +32,7 @@ type xmlSuite struct {
 	Tests       int           `xml:"tests,attr"`
 	Failures    int           `xml:"failures,attr"`
 	Errors      int           `xml:"errors,attr"`
+	Skipped     int           `xml:"skipped,attr"`
 	Properties  xmlProperties `xml:"properties"`
 	Cases       []xmlTest     `xml:"testcase"`
 	SystemOut   string        `xml:"system-out"`
@@ -46,12 +47,17 @@ type xmlTest struct {
 	ClassName string      `xml:"classname,attr"`
 	Time      float64     `xml:"time,attr"`
 	Failure   *xmlFailure `xml:"failure,omitempty"`
+	Skipped   *xmlSkipped `xml:"skipped,omitempty"`
 }
 
 type xmlFailure struct {
 	Type    string `xml:"type,attr"`
 	Message string `xml:"message,attr"`
 	Details string `xml:",chardata"`
+}
+
+type xmlSkipped struct {
+	Message string `xml:"message,attr"`
 }
 
 // LoadXMLReport is used for loading JUnit XML report from specified directory
@@ -146,6 +152,9 @@ func (report *XMLReport) TestCaseResult(i, j int) *ExecutionResult {
 	var status = ExecutionStatusPassed
 	if xCase.Failure != nil {
 		status = ExecutionStatusFailed
+	}
+	if xCase.Skipped != nil {
+		status = ExecutionStatusSkipped
 	}
 
 	return &ExecutionResult{
