@@ -184,6 +184,20 @@ func (report *XMLReport) TestCaseFailure(i, j int) *LogMessage {
 	}
 }
 
+// TesCaseSkippedMessage is used to create new Log Message with skiped message for given xml suite and test case
+func (report *XMLReport) TesCaseSkippedMessage(i, j int) *LogMessage {
+	xSuite := report.xmlSuites[i]
+	suiteStart := parseTimeStamp(xSuite.TimeStamp)
+	xCase := xSuite.Cases[j]
+	d := secondsToDuration(xCase.Time)
+	xCaseEnd := suiteStart.Add(d)
+	return &LogMessage{
+		Time:    xCaseEnd,
+		Level:   LogLevelInfo,
+		Message: xCase.Skipped.Message,
+	}
+}
+
 // TestCaseFailureDetails is used to create new LogMessage with failure details for given xml suite and test case
 func (report *XMLReport) TestCaseFailureDetails(i, j int) *LogMessage {
 	xSuite := report.xmlSuites[i]
