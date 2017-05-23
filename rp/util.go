@@ -60,7 +60,7 @@ func joinURL(base string, parts ...string) string {
 
 // parseTimeStamp parsing with TimestampLayout
 func parseTimeStamp(timeStr string) time.Time {
-	t, err := time.Parse(xmlTimestampLayout, timeStr)
+	t, err := time.Parse(TimestampLayout, timeStr)
 	if err != nil {
 		log.Error(err)
 	}

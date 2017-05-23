@@ -8,11 +8,8 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strings"
 	"time"
-)
-
-const (
-	xmlTimestampLayout = "2006-01-02T15:04:05"
 )
 
 // XMLReport identifies JUnit XML format specification that Hudson supports
@@ -31,6 +28,7 @@ type xmlSuite struct {
 	Tests       int           `xml:"tests,attr"`
 	Failures    int           `xml:"failures,attr"`
 	Errors      int           `xml:"errors,attr"`
+	Skipped     int           `xml:"skipped,attr"`
 	Properties  xmlProperties `xml:"properties"`
 	Cases       []xmlTest     `xml:"testcase"`
 	SystemOut   string        `xml:"system-out"`
@@ -45,12 +43,17 @@ type xmlTest struct {
 	ClassName string      `xml:"classname,attr"`
 	Time      float64     `xml:"time,attr"`
 	Failure   *xmlFailure `xml:"failure,omitempty"`
+	Skipped   *xmlSkipped `xml:"skipped,omitempty"`
 }
 
 type xmlFailure struct {
 	Type    string `xml:"type,attr"`
 	Message string `xml:"message,attr"`
 	Details string `xml:",chardata"`
+}
+
+type xmlSkipped struct {
+	Message string `xml:"message,attr"`
 }
 
 // LoadXMLReport is used for loading JUnit XML report from specified directory
@@ -91,10 +94,12 @@ func (report *XMLReport) LaunchEndTime() time.Time {
 func (report *XMLReport) Suite(i int) *TestItem {
 	xSuite := report.xmlSuites[i]
 	suiteStart := parseTimeStamp(xSuite.TimeStamp)
+	xSuiteNames := []string{xSuite.PackageName, xSuite.Name}
+
 	return &TestItem{
 		Type:        TestItemTypeSuite,
 		StartTime:   suiteStart,
-		Name:        xSuite.PackageName + "." + xSuite.Name,
+		Name:        strings.Join(xSuiteNames, "."),
 		Description: fmt.Sprintf("%s %d", TestItemTypeSuite, xSuite.ID),
 	}
 }
@@ -144,11 +149,19 @@ func (report *XMLReport) TestCaseResult(i, j int) *ExecutionResult {
 	if xCase.Failure != nil {
 		status = ExecutionStatusFailed
 	}
+	if xCase.Skipped != nil {
+		status = ExecutionStatusSkipped
+	}
 
 	return &ExecutionResult{
 		EndTime: xCaseEnd,
 		Status:  status,
 	}
+}
+
+// HasTestCaseSkipped is used to check xml skipped value for given xml suite and test case
+func (report *XMLReport) HasTestCaseSkipped(i, j int) bool {
+	return report.xmlSuites[i].Cases[j].Skipped != nil
 }
 
 // HasTestCaseFailure is used to check xml failure for given xml suite and test case
@@ -168,6 +181,20 @@ func (report *XMLReport) TestCaseFailure(i, j int) *LogMessage {
 		Time:    xCaseEnd,
 		Level:   LogLevelError,
 		Message: xCase.Failure.Message,
+	}
+}
+
+// TesCaseSkippedMessage is used to create new Log Message with skiped message for given xml suite and test case
+func (report *XMLReport) TesCaseSkippedMessage(i, j int) *LogMessage {
+	xSuite := report.xmlSuites[i]
+	suiteStart := parseTimeStamp(xSuite.TimeStamp)
+	xCase := xSuite.Cases[j]
+	d := secondsToDuration(xCase.Time)
+	xCaseEnd := suiteStart.Add(d)
+	return &LogMessage{
+		Time:    xCaseEnd,
+		Level:   LogLevelInfo,
+		Message: xCase.Skipped.Message,
 	}
 }
 

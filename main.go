@@ -163,6 +163,12 @@ func main() {
 				rpClient.SendMesssage(fDetails)
 			}
 
+			if report.HasTestCaseSkipped(i, j) {
+				sMessage := report.TesCaseSkippedMessage(i, j)
+				sMessage.ItemID = tCaseID.ID
+				rpClient.SendMesssage(sMessage)
+			}
+
 			tResult := report.TestCaseResult(i, j)
 			rpClient.FinishTestItem(tCaseID.ID, tResult)
 		}
