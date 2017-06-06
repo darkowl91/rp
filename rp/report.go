@@ -108,7 +108,11 @@ func (report *XMLReport) Suite(i int) *TestItem {
 func (report *XMLReport) SuiteResult(i int) *ExecutionResult {
 	xSuite := report.xmlSuites[i]
 	suiteStart := parseTimeStamp(xSuite.TimeStamp)
-	d := secondsToDuration(xSuite.Time)
+	t := xSuite.Time
+	if t <= 0 {
+		t = 00.1
+	}
+	d := secondsToDuration(t)
 	suiteEnd := suiteStart.Add(d)
 
 	status := ExecutionStatusPassed
@@ -143,7 +147,11 @@ func (report *XMLReport) TestCaseResult(i, j int) *ExecutionResult {
 	xSuite := report.xmlSuites[i]
 	suiteStart := parseTimeStamp(xSuite.TimeStamp)
 	xCase := xSuite.Cases[j]
-	d := secondsToDuration(xCase.Time)
+	t := xCase.Time
+	if t <= 0 {
+		t = 00.1
+	}
+	d := secondsToDuration(t)
 	xCaseEnd := suiteStart.Add(d)
 	var status = ExecutionStatusPassed
 	if xCase.Failure != nil {
@@ -174,9 +182,12 @@ func (report *XMLReport) TestCaseFailure(i, j int) *LogMessage {
 	xSuite := report.xmlSuites[i]
 	suiteStart := parseTimeStamp(xSuite.TimeStamp)
 	xCase := xSuite.Cases[j]
-	d := secondsToDuration(xCase.Time)
+	t := xCase.Time
+	if t <= 0 {
+		t = 00.1
+	}
+	d := secondsToDuration(t)
 	xCaseEnd := suiteStart.Add(d)
-
 	return &LogMessage{
 		Time:    xCaseEnd,
 		Level:   LogLevelError,
@@ -189,7 +200,11 @@ func (report *XMLReport) TesCaseSkippedMessage(i, j int) *LogMessage {
 	xSuite := report.xmlSuites[i]
 	suiteStart := parseTimeStamp(xSuite.TimeStamp)
 	xCase := xSuite.Cases[j]
-	d := secondsToDuration(xCase.Time)
+	t := xCase.Time
+	if t <= 0 {
+		t = 00.1
+	}
+	d := secondsToDuration(t)
 	xCaseEnd := suiteStart.Add(d)
 	return &LogMessage{
 		Time:    xCaseEnd,
